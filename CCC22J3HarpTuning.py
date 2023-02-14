@@ -1,4 +1,4 @@
-# 15/15 .replace() very useful
+# 15/15 do not have to print all outputs at one, can print part by part
 
 x = str(input())
 
