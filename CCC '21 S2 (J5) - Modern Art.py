@@ -1,26 +1,31 @@
-# 10/15 TLE
+from collections import defaultdict
 
-m = int(input())
-n = int(input())
+ROWS = int(input())
+COLS = int(input())
+row_choice = defaultdict(int)
+col_choice = defaultdict(int)
+painting = [[0 for _ in range(COLS)] for _ in range(ROWS)]
 
-painting = [[0 for x in range(n)] for y in range(m)]
-count = int(input())
+for i in range(int(input())):
+    choice = input().split()
+    if choice[0] == "R":
+        row_choice[int(choice[1]) - 1] += 1
+    else:
+        col_choice[int(choice[1]) - 1] += 1
 
-for i in range(count):
-    brush = input().split()
-    if brush[0] == "R":  # increment all values in row by 1
-        row = int(brush[1]) - 1
+for row in row_choice.keys():
+    if row_choice[row] % 2 == 1:
         painting[row] = list(map(lambda x: x + 1, painting[row]))
 
-    elif brush[0] == "C":  # increment all values in column by 1
-        col = int(brush[1]) - 1
-        for x in range(len(painting)):
-            painting[x][col] += 1
+for col in col_choice.keys():
+    if col_choice[col] % 2 == 1:
+        for i in range(ROWS):
+            painting[i][col] += 1
+
 
 total = 0
-for painting_row in painting:
-    for tile in painting_row:
-        if tile % 2 == 1:
+for i in painting:
+    for j in i:
+        if j%2 ==1:
             total += 1
-
 print(total)
