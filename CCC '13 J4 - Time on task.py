@@ -1,6 +1,6 @@
 # 15/15, don't forget to 'break'
 
-total = int(input())
+count = int(input())
 repeats = int(input())
 
 times = []
@@ -13,8 +13,8 @@ for _ in range(repeats):
 times.sort()
 
 for i in times:
-    total -= i
-    if total < 0:
+    count -= i
+    if count < 0:
         print(count)
         break
 
