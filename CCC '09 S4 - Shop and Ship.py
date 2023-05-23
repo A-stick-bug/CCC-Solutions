@@ -1,4 +1,5 @@
 # TLE on test cases 4-6
+# the other solution for this question passes all test cases
 
 import heapq
 from collections import defaultdict
