@@ -4,12 +4,12 @@ from collections import Counter
 n = int(input())
 readings = [int(input()) for i in range(n)]
 x = Counter(readings)
-table = x.most_common()  # turn into a tuple
+table = x.most_common()  # turn into a tuple with decreasing order
 
 
 def find_greatest():
     first = table[0][0]
-    highest_frequency = table[0][1]  # Counter objects are sorted in decreasing order
+    highest_frequency = table[0][1]
     second_frequency = table[1][1]
     res = 0
 
