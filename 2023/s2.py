@@ -4,9 +4,8 @@ x = int(input())
 heights = input().split()
 heights = list(map(int, heights))
 
-vals = {1: 0}  # asym value of length 1 is always 0
-for i in range(2, x + 1):
-    vals[i] = float("inf")
+vals = [float('inf') for _ in range(x + 1)]
+vals[1] = 0  # asym value of length 1 is always 0
 
 for i in range(0, x - 1):
     start, end = i, i + 1
@@ -32,4 +31,5 @@ for i in range(1, x - 1):
         start -= 1
         length += 2
 
-print(*list(vals.values()), sep=" ")
+print(*vals[1:], sep=" ")
+
