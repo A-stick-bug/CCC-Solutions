@@ -6,7 +6,7 @@ COLS = int(input())
 end = ROWS * COLS
 graph = [[] for _ in range(end + 1)]
 
-# constructing the graph (as a 1D array instead of 2D because it's easier to show products)
+# constructing the graph: element i has all factors of i that are also in the 'graph'
 for r in range(1, ROWS + 1):
     row = map(int, input().split())
     c = 1
