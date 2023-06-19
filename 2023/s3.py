@@ -1,4 +1,4 @@
-# just have to make individual code for each test case, hard part if figuring out those cases
+# just have to make individual code for each corner test case, hard part if figuring out those cases
 # not finished, currently 2/15
 
 
