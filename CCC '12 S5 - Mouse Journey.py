@@ -1,23 +1,37 @@
-# brute force BFS and DFS didn't work, so I had to use dynamic programming (15/15)
+"""
+15/15
+Very easy for a dynamic programming problem (and for a S5)
+
+Explanation of code:
+- each cell represents the number of possible path to get there
+- added an extra row and column of 0 to prevent index error (and because there are 0 possible path to get there)
+- all cells with cats will stay 0 (can't go there)
+
+Dynamic programming part:
+- the possible ways to get to a cell is the sum of the possible ways to get to the cell on top and to the left
+
+Example: State of dp after processing all cells for ROWS = 3, COLS = 3, CATS = 0
+1 1 1
+1 2 3
+1 3 6
+"""
 
 ROWS, COLS = map(int, input().split())
-grid = [[True for _ in range(COLS)] for _ in range(ROWS)]
 
-for _ in range(int(input())):
+# extra array to track cats for simplicity
+cats = [[False for _ in range(COLS + 1)] for _ in range(ROWS + 1)]
+for i in range(int(input())):  # cats
     r, c = map(int, input().split())
-    grid[r - 1][c - 1] = False  # minus one because the problem uses 1-indexing
+    cats[r][c] = True
 
-dp = [[0 for _ in range(COLS)] for _ in range(ROWS)]
-dp[0][0] = 1
+# add extra row and col to prevent array out of bounds
+dp = [[0 for _ in range(COLS + 1)] for _ in range(ROWS + 1)]
+dp[1][1] = 1
 
-for row in range(ROWS):
-    for col in range(COLS):
-        if not grid[row][col]:
-            continue
-        if row > 0:
-            dp[row][col] += dp[row - 1][col]
-        if col > 0:
-            dp[row][col] += dp[row][col - 1]
+for r in range(1, ROWS + 1):
+    for c in range(1, COLS + 1):
+        if not cats[r][c]:
+            dp[r][c] += dp[r-1][c] + dp[r][c-1]
 
 print(dp[-1][-1])
 
