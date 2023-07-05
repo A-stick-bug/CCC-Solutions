@@ -41,7 +41,7 @@ while stack:
         new_state = state.copy()
         new_state[a] += a_points
         new_state[b] += b_points
-        # copy is needed otherwise modifying one array will change all others including the ones in the queue
-        stack.append((new_state.copy(), games.copy()))
+        # copy of games is needed otherwise modifying one array will change all others including the ones in the queue
+        stack.append((new_state, games.copy()))
 
 print(res)
