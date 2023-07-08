@@ -22,17 +22,9 @@ for i in range(1, 11):
 
 
 # cells are invalid if it forms a cycle (with itself or other cells)
-def dfs(row, col, dependencies=None, dp=None):
-    if dependencies is None:
-        dependencies = set()
-    if dp is None:
-        dp = {}
-
+def dfs(row, col, dependencies):
     if (row, col) in dependencies:
         return '*'
-
-    if (row, col) in dp:
-        return dp[(row, col)]
 
     cell = sheets[row][col]
     if type(cell) == int:
@@ -43,20 +35,19 @@ def dfs(row, col, dependencies=None, dp=None):
         total = 0
         dependencies.add((row, col))
         for r, c in cell:
-            value = dfs(r, c, dependencies, dp)
+            value = dfs(r, c, dependencies)
             if value == '*':
                 return '*'
             total += value
         dependencies.remove((row, col))
-        dp[(row, col)] = total
+        sheets[row][col] = total
         return total
-
 
 
 for i in range(1, 11):
     for j in range(1, 10):
         if type(sheets[i][j]) != int:
-            sheets[i][j] = dfs(i, j)
+            sheets[i][j] = dfs(i, j, set())
 
 for i in range(1, 11):
     print(*sheets[i][1:], sep=" ")
