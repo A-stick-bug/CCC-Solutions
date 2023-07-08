@@ -1,4 +1,4 @@
-# I probably overthinked it
+# DFS solution, technically using dynamic programming
 
 rows = {"A": 1, "B": 2, "C": 3, "D": 4, "E": 5, "F": 6, "G": 7, "H": 8, "I": 9, "J": 10}
 rows1 = {1: 'A', 2: 'B', 3: 'C', 4: 'D', 5: 'E', 6: 'F', 7: 'G', 8: 'H', 9: 'I', 10: "J"}
@@ -10,7 +10,7 @@ for i in range(10):
 # format in a way that is easier to do a DFS on
 for i in range(1, 11):
     for j in range(1, 10):
-        if sheets[i][j].isnumeric():  # just a value
+        if sheets[i][j].isnumeric():  # just a number
             sheets[i][j] = int(sheets[i][j])
         else:
             temp = sheets[i][j].split("+")
@@ -23,14 +23,12 @@ for i in range(1, 11):
 
 # cells are invalid if it forms a cycle (with itself or other cells)
 def dfs(row, col, dependencies):
-    if (row, col) in dependencies:
+    cell = sheets[row][col]
+    if (row, col) in dependencies or cell == "*":  # cycle detected or undefined cell
         return '*'
 
-    cell = sheets[row][col]
     if type(cell) == int:
         return cell
-    elif cell == '*':
-        return '*'
     else:
         total = 0
         dependencies.add((row, col))
@@ -40,14 +38,13 @@ def dfs(row, col, dependencies):
                 return '*'
             total += value
         dependencies.remove((row, col))
-        sheets[row][col] = total
+        sheets[row][col] = total  # update value to prevent wasting time recalculating
         return total
 
 
 for i in range(1, 11):
     for j in range(1, 10):
-        if type(sheets[i][j]) != int:
-            sheets[i][j] = dfs(i, j, set())
+        sheets[i][j] = dfs(i, j, set())
 
 for i in range(1, 11):
-    print(*sheets[i][1:], sep=" ")
+    print(*sheets[i][1:], sep=" ")  # don't include the extra column
