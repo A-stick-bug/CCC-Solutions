@@ -1,2 +1,2 @@
-# CCC
-Random CCC questions I did for practice
+# CCC Solutions
+CCC problems that I did for practice
