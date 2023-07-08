@@ -14,11 +14,8 @@ for i in range(1, 11):
             sheets[i][j] = int(sheets[i][j])
         else:
             temp = sheets[i][j].split("+")
-            if f"{rows1[i]}{j}" in temp:  # invalid cell
-                sheets[i][j] = "*"
-            else:
-                # turn into a (row, col) tuple of the sum of other cells
-                sheets[i][j] = list(map(lambda exp: (rows[exp[0]], int(exp[1])), temp))
+            # turn into a (row, col) tuple of the sum of other cells
+            sheets[i][j] = list(map(lambda exp: (rows[exp[0]], int(exp[1])), temp))
 
 
 # cells are invalid if it forms a cycle (with itself or other cells)
