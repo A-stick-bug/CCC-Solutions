@@ -23,9 +23,9 @@ if str(rise)[0] == "-":
     rise = rise.replace("-", "")
     rise = int(rise)
 
-total = rise + run
+count = rise + run
 
-if (charge%2 == total%2) and charge >= total:
+if (charge % 2 == count % 2) and charge >= count:
     print("Y")
 else:
     print("N")

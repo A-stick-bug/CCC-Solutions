@@ -1,10 +1,10 @@
 number = int(input())
 zero = int(input())
 
-total = number
+count = number
 
 for _ in range(zero):
-    total += number*10
+    count += number * 10
     number *= 10
 
-print(total)
+print(count)

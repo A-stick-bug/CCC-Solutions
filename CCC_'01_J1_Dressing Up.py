@@ -1,24 +1,17 @@
 from math import ceil, floor
 
 amount = int(input())
-
 i = 1
 spaces = (amount - 1) * 2
 
-# first half + middle
 while i <= ceil(amount / 2):
-
     for a in range(0, i + (i - 1)):
         print("*", end="")
-
     for j in range(0, spaces):
         print(" ", end="")
-
     for a in range(0,i+(i-1)):
         print("*", end="")
-
     print()
-
     spaces -= 4
     i += 1
 
@@ -39,4 +32,3 @@ while i <= floor(amount/2):
     i += 1
     spaces += 4
     asterisk -= 2
-

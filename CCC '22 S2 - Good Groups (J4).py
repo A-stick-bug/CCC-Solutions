@@ -1,40 +1,28 @@
-# 14/15 TLE
+map = {}
 
 same = []
-different = []
+x = int(input())
+for _ in range(x):
+    same.append(input().split())
 
-repeats1 = int(input())
+diff = []
+y = int(input())
+for _ in range(y):
+    diff.append(input().split())
 
-# must be in same group
-for _ in range(repeats1):
-    to_add = input().split()
-    same.append(to_add)
+z = int(input())
+for i in range(z):
+    a, b, c = input().split()
+    map[a] = i
+    map[b] = i
+    map[c] = i
 
-repeats2 = int(input())
-
-# must be in different group
-for _ in range(repeats2):
-    to_add2 = input().split()
-    different.append(to_add2)
-
-print(f"same constraints: {same}")
-print(f"different constraints: {different}")
-
-repeats3 = int(input())
 broke = 0
-
-for _ in range(repeats3):
-    group = input().split()
-    for i in same.copy():
-        if (i[0] in group or i[1] in group) and not (i[0] in group and i[1] in group):
-            broke += 1
-            print("+1")
-            same.remove(i)
-
-    for i in different.copy():
-        if i[0] in group and i[1] in group:
-            broke += 1
-            print("+1")
-            different.remove(i)
+for i in same:
+    if map[i[0]] != map[i[1]]:
+        broke += 1
+for i in diff:
+    if map[i[0]] == map[i[1]]:
+        broke += 1
 
 print(broke)

@@ -15,13 +15,13 @@ for i in arr:
 
 if flag:
     # verticals
-    total = 0
+    count = 0
     for j in range(4):
-        total = 0
+        count = 0
         for k in range(4):
-            total += arr[k][j]
+            count += arr[k][j]
 
-        if total != value:
+        if count != value:
             flag = False
             break
 

@@ -8,9 +8,5 @@ for i in range(trees):
     tree = input().split()
     field[int(tree[0])][int(tree[1])] = 1
 
-end = [0,0]
-
-for i in range(size):
-    for j in range(size):
-        if 1 not in field[]
+print(field)
 
