@@ -18,3 +18,4 @@ for file in files:
         if not os.path.exists(dest):
             os.makedirs(dest)
         shutil.move(os.path.join(src, file), dest)
+        print(f"Successfully moved file: {file}")
