@@ -14,16 +14,17 @@ for i in range(n_routes):
         graph[b].append((time, a))
 
 start, end = map(int, input().split())
+inf = 10 ** 9 + 1
+
 
 def dijkstra(start, end):
-    costs = [float('inf') for _ in range(n_islands+1)]
+    costs = [inf for _ in range(n_islands + 1)]
     costs[start] = 0
     pq = [(0, start)]
-    processed = [False for _ in range(n_islands+1)]
 
     while pq:
         cost, node = heapq.heappop(pq)
-        if node in processed or node not in graph:
+        if node not in graph:
             continue
 
         if node == end:
@@ -31,14 +32,13 @@ def dijkstra(start, end):
 
         neighbors = graph[node]
 
-        for neighbor_cost,neighbor  in neighbors:
+        for neighbor_cost, neighbor in neighbors:
             new_cost = cost + neighbor_cost
             if costs[neighbor] > new_cost:
                 costs[neighbor] = new_cost
                 heapq.heappush(pq, (new_cost, neighbor))
 
-        processed[node] = True
     return -1
 
 
-print(dijkstra(start,end))
+print(dijkstra(start, end))
