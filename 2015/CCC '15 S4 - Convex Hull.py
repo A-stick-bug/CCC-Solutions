@@ -22,6 +22,7 @@ while pq:
         print(time)
         sys.exit()
 
+    # already processed this, can skip
     if time > dist[island][0] and damage > dist[island][1]:
         continue
 
