@@ -1,4 +1,4 @@
-# 15/15 on CCC grader, fails in extra DMOJ cases due to MLE
+# 15/15 on CCC grader, passes extra DMOJ cases as well
 
 from collections import deque
 
@@ -18,15 +18,17 @@ start, end = map(int, input().split())
 def is_greater(start, end):
     # return True if start > end
     visited = [False for _ in range(nodes + 1)]
+    visited[start] = True
     q = deque([start])
     while q:
         node = q.popleft()
-        visited[node] = True
+
         if node == end:
             return True
         for adj in graph[node]:
             if not visited[adj]:
                 q.append(adj)
+                visited[adj] = True  # setting as visited here prevents wasted appends to queue
     return False
 
 
