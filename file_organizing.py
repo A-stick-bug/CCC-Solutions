@@ -4,9 +4,6 @@ import shutil
 src = os.getcwd()
 files = os.listdir(src)
 
-for year in range(2000, 2023):  # creating the folders
-    os.makedirs(str(year), exist_ok=True)
-
 # does not work for problems of year before 2000
 for file in files:
     if file.startswith("CCC"):
