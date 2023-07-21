@@ -1,5 +1,9 @@
-# 15/15
+# 15/15, tricky BFS
+#
+# approach:
 # an extra copy of the map is made for cameras (more convenient than just turning them into walls)
+# for all conveyors, their cell will be turned into a (row, col) tuple of the cell that it eventually leads to
+# note that it is essentially a teleport because you are not taking steps on a conveyor
 
 from collections import deque
 
@@ -41,20 +45,21 @@ def conveyor_to_wall(array):
     directions = {'L': (0, -1), 'R': (0, 1), 'U': (-1, 0), 'D': (1, 0)}
 
     def dfs(r, c):
-        if array[r][c] not in directions and type(array[r][c]) != tuple:  # end of conveyor
-            return r, c
-        if isinstance(array[r][c], tuple):
+        if type(array[r][c]) == tuple:  # already calculated this, just use its value
             return array[r][c]
+        elif array[r][c] not in directions:  # end of conveyor
+            return r, c
 
         direction = array[r][c]
-        array[r][c] = '#'  # marked as visited
         dr, dc = directions[direction]
-        res = dfs(r + dr, c + dc)
 
-        if res == (r, c):  # cycle detected, turn into wall
+        array[r][c] = '#'  # mark as visited
+        res = dfs(r + dr, c + dc)  # (row, col)
+
+        if res == (r, c):  # came back to start: cycle detected, turn into wall
             array[r][c] = 'W'
         else:
-            array[r][c] = res
+            array[r][c] = res  # set to the location it leads to as a (row, col) tuple
         return res
 
     for r in range(rows):
@@ -79,6 +84,8 @@ if not flag:
             # special case where there is a conveyor: go to wherever it leads to
             if type(graph[new_r][new_c]) == tuple:
                 tp_r, tp_c = graph[new_r][new_c]
+
+                # check that conveyor actually leads to a valid location
                 if graph[tp_r][tp_c] == "." and not cameras[tp_r][tp_c] and distances[tp_r][tp_c] == 10000:
                     q.append((tp_r, tp_c))
                     distances[tp_r][tp_c] = min(distances[tp_r][tp_c], distances[row][col] + 1)
