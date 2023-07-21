@@ -1,4 +1,4 @@
-# 15/15, still working on improvements and making it look better, updates very soon
+# 15/15
 # an extra copy of the map is made for cameras (more convenient than just turning them into walls)
 
 from collections import deque
@@ -41,15 +41,17 @@ def conveyor_to_wall(array):
     directions = {'L': (0, -1), 'R': (0, 1), 'U': (-1, 0), 'D': (1, 0)}
 
     def dfs(r, c):
-        if array[r][c] not in directions:
+        if array[r][c] not in directions and type(array[r][c]) != tuple:  # end of conveyor
             return r, c
         if isinstance(array[r][c], tuple):
             return array[r][c]
+
         direction = array[r][c]
-        array[r][c] = '#'
+        array[r][c] = '#'  # marked as visited
         dr, dc = directions[direction]
         res = dfs(r + dr, c + dc)
-        if res == (r, c):
+
+        if res == (r, c):  # cycle detected, turn into wall
             array[r][c] = 'W'
         else:
             array[r][c] = res
@@ -58,15 +60,15 @@ def conveyor_to_wall(array):
     for r in range(rows):
         for c in range(cols):
             if array[r][c] in directions:
-                res = dfs(r, c)
-                if not (0 <= res[0] < rows and 0 <= res[1] < cols) or array[res[0]][res[1]] == 'W':
+                r1, r2 = dfs(r, c)
+                if array[r1][r2] == 'W':  # dead end or cycle
                     array[r][c] = 'W'
 
     return array
 
 
-graph = conveyor_to_wall(graph)
 # do the BFS search
+graph = conveyor_to_wall(graph)  # add in the precomputed values
 if not flag:
     while q:
         row, col = q.popleft()
@@ -74,7 +76,7 @@ if not flag:
             new_r = row + dr
             new_c = col + dc
 
-            # special case where there is a conveyor
+            # special case where there is a conveyor: go to wherever it leads to
             if type(graph[new_r][new_c]) == tuple:
                 tp_r, tp_c = graph[new_r][new_c]
                 if graph[tp_r][tp_c] == "." and not cameras[tp_r][tp_c] and distances[tp_r][tp_c] == 10000:
