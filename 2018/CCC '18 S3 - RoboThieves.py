@@ -1,5 +1,7 @@
+# 15/15, still working on improvements and making it look better, updates very soon
+# an extra copy of the map is made for cameras (more convenient than just turning them into walls)
+
 from collections import deque
-import sys
 
 ROWS, COLS = map(int, input().split())
 graph = [list(input()) for _ in range(ROWS)]
@@ -11,9 +13,11 @@ flag = False  # if the starting cell is covered by camera, you cannot go anywher
 directions = [(0, 1), (1, 0), (-1, 0), (0, -1)]
 q = deque()
 
+# handle cameras and get start
 for r in range(ROWS):
     for c in range(COLS):
         cell = graph[r][c]
+
         if cell == "C":
             # track cells visible to camera
             for dr, dc in directions:
@@ -30,21 +34,60 @@ for r in range(ROWS):
             q.append((r, c))
             distances[r][c] = 0
 
-while q:
-    row, col = q.popleft()
-    for dr, dc in directions:
-        new_r = row + dr
-        new_c = col + dc
-        # regular path no conveyor and not caught by camera --- and not cameras[new_r][new_c]
-        if graph[new_r][new_c] == "." and not cameras[new_r][new_c] and distances[new_r][new_c] == 10000:
-            q.append((new_r, new_c))
-            distances[new_r][new_c] = min(distances[new_r][new_c], distances[row][col] + 1)
 
-# from numpy import matrix
-# print(matrix(distances))
+def conveyor_to_wall(array):
+    rows = len(array)
+    cols = len(array[0])
+    directions = {'L': (0, -1), 'R': (0, 1), 'U': (-1, 0), 'D': (1, 0)}
+
+    def dfs(r, c):
+        if array[r][c] not in directions:
+            return r, c
+        if isinstance(array[r][c], tuple):
+            return array[r][c]
+        direction = array[r][c]
+        array[r][c] = '#'
+        dr, dc = directions[direction]
+        res = dfs(r + dr, c + dc)
+        if res == (r, c):
+            array[r][c] = 'W'
+        else:
+            array[r][c] = res
+        return res
+
+    for r in range(rows):
+        for c in range(cols):
+            if array[r][c] in directions:
+                res = dfs(r, c)
+                if not (0 <= res[0] < rows and 0 <= res[1] < cols) or array[res[0]][res[1]] == 'W':
+                    array[r][c] = 'W'
+
+    return array
+
+
+graph = conveyor_to_wall(graph)
+# do the BFS search
+if not flag:
+    while q:
+        row, col = q.popleft()
+        for dr, dc in directions:
+            new_r = row + dr
+            new_c = col + dc
+
+            # special case where there is a conveyor
+            if type(graph[new_r][new_c]) == tuple:
+                tp_r, tp_c = graph[new_r][new_c]
+                if graph[tp_r][tp_c] == "." and not cameras[tp_r][tp_c] and distances[tp_r][tp_c] == 10000:
+                    q.append((tp_r, tp_c))
+                    distances[tp_r][tp_c] = min(distances[tp_r][tp_c], distances[row][col] + 1)
+                    continue
+
+            # regular path no conveyor and not caught by camera
+            if graph[new_r][new_c] == "." and not cameras[new_r][new_c] and distances[new_r][new_c] == 10000:
+                q.append((new_r, new_c))
+                distances[new_r][new_c] = min(distances[new_r][new_c], distances[row][col] + 1)
 
 for r in range(ROWS):
     for c in range(COLS):
         if graph[r][c] == ".":
             print(distances[r][c] if distances[r][c] != 10000 and not flag else -1)
-
