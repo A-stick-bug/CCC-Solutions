@@ -10,7 +10,7 @@ trees.append((0, 0))
 trees.append((n + 1, n + 1))
 trees.sort()  # top to bottom
 
-biggestSquare = 0
+res = 0
 for i in range(len(trees)):
     horizontal = [0, n + 1]
 
@@ -20,10 +20,10 @@ for i in range(len(trees)):
         horizontal.sort() # left to right
         for k in range(1, len(horizontal)):
             width = max(width, horizontal[k] - horizontal[k - 1] - 1)
-        biggestSquare = max(biggestSquare, min(height, width))
+        res = max(res, min(height, width))
         horizontal.append(trees[j][1])
 
-print(biggestSquare)
+print(res)
 
 
 # 8/15 dp approach O(mn)
