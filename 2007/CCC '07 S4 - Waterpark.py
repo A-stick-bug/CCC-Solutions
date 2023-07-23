@@ -29,3 +29,23 @@ def find_paths(node):
 
 
 print(find_paths(n))
+
+
+# # bottom-up solution (less intuitive)
+# n = int(input())
+# graph = [[] for _ in range(n + 1)]  # no cycles (DAG)
+#
+# while True:
+#     start, end = map(int, input().split())
+#     if start == 0 and end == 0:
+#         break
+#     graph[start].append(end)
+#
+# dp = [1]
+# for x in reversed(range(1, n)):
+#     res = 0
+#     for y in graph[x]:
+#         res += dp[n - y]
+#     dp.append(res)
+#
+# print(dp[-1])
