@@ -1,28 +1,33 @@
-map = {}
+from collections import defaultdict
 
-same = []
-x = int(input())
-for _ in range(x):
-    same.append(input().split())
+same = defaultdict(set)
+for _ in range(int(input())):
+    a,b = input().split()
+    same[a].add(b)
 
-diff = []
-y = int(input())
-for _ in range(y):
-    diff.append(input().split())
+different = defaultdict(set)
+for _ in range(int(input())):
+    a,b = input().split()
+    different[a].add(b)
 
-z = int(input())
-for i in range(z):
-    a, b, c = input().split()
-    map[a] = i
-    map[b] = i
-    map[c] = i
+res = 0
 
-broke = 0
-for i in same:
-    if map[i[0]] != map[i[1]]:
-        broke += 1
-for i in diff:
-    if map[i[0]] == map[i[1]]:
-        broke += 1
+# note: constraint can't be violated twice, so we remove it after being violated
+for _ in range(int(input())):
+    abc = input().split()
+    for x in abc:
+        to_remove = set()
+        for s in same[x]:
+            if s not in abc:
+                to_remove.add(s)
+                res += 1
+        same[x] -= to_remove  # remove after iterating because you can't remove while iterating over a set
 
-print(broke)
+        to_remove = set()
+        for p in abc:
+            if p != x and p in different[x]:
+                to_remove.add(p)
+                res += 1
+        same[x] -= to_remove
+
+print(res)
