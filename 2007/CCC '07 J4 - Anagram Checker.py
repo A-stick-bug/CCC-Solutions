@@ -1,6 +1,12 @@
 # looking back at my horribly inefficient solution bothered me, so I improved it
 # now, it's O(n)
 
+
+# O(n*log(n)), one liner solution for fun :)
+# somehow faster than the O(n) solution because the test cases are too small
+# print("Is an anagram." if sorted(input().replace(" ", "")) == sorted(input().replace(" ", "")) else "Is not an anagram.")
+
+
 from collections import defaultdict
 
 # if they have the same amount of each letter, they are anagrams
