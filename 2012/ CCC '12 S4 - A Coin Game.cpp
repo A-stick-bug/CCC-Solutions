@@ -1,5 +1,6 @@
 // 15/15
-// direct translation of the python version of this code
+// direct translation of my brute force BFS python code
+// check the python file for improved bidirectional BFS solution
 
 #include <iostream>
 #include <vector>

@@ -1,8 +1,33 @@
-# brute force through all combinations
-# passes the test cases for junior division
-# TLE on senior division, check the c++ version of this code for a solution that passes
+# 15/15
+# Passes all test cases, including ones from the senior division
+# uses bidirectional BFS to speed things up
 
 from collections import deque
+
+
+def store(coins):
+    return "".join(map(str, coins))
+
+
+def get_neighbors(config, n):
+    neighbors = []
+    for i in range(n):
+        if not config[i]:  # nothing to move from here
+            continue
+
+        if i != 0 and (not config[i - 1] or config[i][-1] < config[i - 1][-1]):  # try moving left
+            new_config = [i.copy() for i in config]
+            to_move = new_config[i].pop()
+            new_config[i - 1].append(to_move)  # move coin to the left
+            neighbors.append(new_config)
+
+        if i != n - 1 and (not config[i + 1] or config[i][-1] < config[i + 1][-1]):  # try moving right
+            new_config = [i.copy() for i in config]
+            to_move = new_config[i].pop()
+            new_config[i + 1].append(to_move)  # move coin to the right
+            neighbors.append(new_config)
+    return neighbors
+
 
 # for each test case
 while True:
@@ -12,46 +37,103 @@ while True:
 
     coins = list(map(int, input().split()))
     coins = [[i] for i in coins]  # each element is a stack of coins
-    end = [[i] for i in range(1, n+1)]  # the state we are trying to reach
-    store = lambda coins: "".join(map(str, coins))  # save space when storing in used
+    end = [[i] for i in range(1, n + 1)]  # the state we are trying to reach
 
-    q = deque()
-    q.append((coins, 0))
-    used = set()
-    used.add(store(coins))
+    q_start = deque()
+    q_start.append((coins, 0))
+    used_start = {}
+    used_start[store(coins)] = 0
+
+    q_end = deque()
+    q_end.append((end, 0))
+    used_end = {}
+    used_end[store(end)] = 0
 
     found = False
-    while q:
-        config, steps = q.popleft()
-        # print(config)
+    while q_start and q_end:
+        if len(q_start) < len(q_end):
+            config, steps = q_start.popleft()
+            if store(config) in used_end:
+                print(steps + used_end[store(config)])
+                found = True
+                break
 
-        if config == end:  # is sorted
-            print(steps)
-            found = True
+            for neighbor in get_neighbors(config, n):
+                temp = store(neighbor)
+                if temp not in used_start:
+                    q_start.append((neighbor, steps + 1))
+                    used_start[temp] = steps + 1
+        else:
+            config, steps = q_end.popleft()
+            if store(config) in used_start:
+                print(steps + used_start[store(config)])
+                found = True
+                break
 
-        for i in range(n):
-            if not config[i]:  # nothing to move from here
-                continue
-
-            if i != 0 and (not config[i - 1] or config[i][-1] < config[i - 1][-1]):  # try moving left
-                new_config = [i.copy() for i in config]
-                to_move = new_config[i].pop()
-                new_config[i - 1].append(to_move)  # move coin to the left
-
-                temp = store(new_config)
-                if temp not in used:
-                    q.append((new_config, steps + 1))
-                    used.add(temp)
-
-            if i != n - 1 and (not config[i + 1] or config[i][-1] < config[i + 1][-1]):  # try moving right
-                new_config = [i.copy() for i in config]
-                to_move = new_config[i].pop()
-                new_config[i + 1].append(to_move)  # move coin to the right
-
-                temp = store(new_config)
-                if temp not in used:
-                    q.append((new_config, steps + 1))
-                    used.add(temp)
+            for neighbor in get_neighbors(config, n):
+                temp = store(neighbor)
+                if temp not in used_end:
+                    q_end.append((neighbor, steps + 1))
+                    used_end[temp] = steps + 1
 
     if not found:
         print("IMPOSSIBLE")
+
+
+# # brute force through all combinations
+# # passes the test cases for junior division
+# # TLE on senior division, check the c++ version of this code for a solution that passes
+#
+# from collections import deque
+#
+# # for each test case
+# while True:
+#     n = int(input())
+#     if n == 0:
+#         break
+#
+#     coins = list(map(int, input().split()))
+#     coins = [[i] for i in coins]  # each element is a stack of coins
+#     end = [[i] for i in range(1, n+1)]  # the state we are trying to reach
+#     store = lambda coins: "".join(map(str, coins))  # save space when storing in used
+#
+#     q = deque()
+#     q.append((coins, 0))
+#     used = set()
+#     used.add(store(coins))
+#
+#     found = False
+#     while q:
+#         config, steps = q.popleft()
+#         # print(config)
+#
+#         if config == end:  # is sorted
+#             print(steps)
+#             found = True
+#
+#         for i in range(n):
+#             if not config[i]:  # nothing to move from here
+#                 continue
+#
+#             if i != 0 and (not config[i - 1] or config[i][-1] < config[i - 1][-1]):  # try moving left
+#                 new_config = [i.copy() for i in config]
+#                 to_move = new_config[i].pop()
+#                 new_config[i - 1].append(to_move)  # move coin to the left
+#
+#                 temp = store(new_config)
+#                 if temp not in used:
+#                     q.append((new_config, steps + 1))
+#                     used.add(temp)
+#
+#             if i != n - 1 and (not config[i + 1] or config[i][-1] < config[i + 1][-1]):  # try moving right
+#                 new_config = [i.copy() for i in config]
+#                 to_move = new_config[i].pop()
+#                 new_config[i + 1].append(to_move)  # move coin to the right
+#
+#                 temp = store(new_config)
+#                 if temp not in used:
+#                     q.append((new_config, steps + 1))
+#                     used.add(temp)
+#
+#     if not found:
+#         print("IMPOSSIBLE")
