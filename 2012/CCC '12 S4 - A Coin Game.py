@@ -40,11 +40,11 @@ while True:
     end = [[i] for i in range(1, n + 1)]  # the state we are trying to reach
 
     q_start = deque()
-    q_start.append((coins))
+    q_start.append(coins)
     used_start = {store(coins): 0}
 
     q_end = deque()
-    q_end.append((end))
+    q_end.append(end)
     used_end = {store(end): 0}
 
     found = False
