@@ -9,7 +9,7 @@ def store(coins):
     return "".join(map(str, coins))
 
 
-def get_neighbors(config, n):
+def get_neighbors(config):
     neighbors = []
     for i in range(n):
         if not config[i]:  # nothing to move from here
@@ -40,41 +40,45 @@ while True:
     end = [[i] for i in range(1, n + 1)]  # the state we are trying to reach
 
     q_start = deque()
-    q_start.append((coins, 0))
-    used_start = {}
-    used_start[store(coins)] = 0
+    q_start.append((coins))
+    used_start = {store(coins): 0}
 
     q_end = deque()
-    q_end.append((end, 0))
-    used_end = {}
-    used_end[store(end)] = 0
+    q_end.append((end))
+    used_end = {store(end): 0}
 
     found = False
     while q_start and q_end:
-        if len(q_start) < len(q_end):
-            config, steps = q_start.popleft()
-            if store(config) in used_end:
-                print(steps + used_end[store(config)])
-                found = True
-                break
+        config = q_start.popleft()
+        c = store(config)
+        steps = used_start[c]
 
-            for neighbor in get_neighbors(config, n):
-                temp = store(neighbor)
-                if temp not in used_start:
-                    q_start.append((neighbor, steps + 1))
-                    used_start[temp] = steps + 1
-        else:
-            config, steps = q_end.popleft()
-            if store(config) in used_start:
-                print(steps + used_start[store(config)])
-                found = True
-                break
+        if c in used_end:
+            print(steps + used_end[c])
+            found = True
+            break
 
-            for neighbor in get_neighbors(config, n):
-                temp = store(neighbor)
-                if temp not in used_end:
-                    q_end.append((neighbor, steps + 1))
-                    used_end[temp] = steps + 1
+        for neighbor in get_neighbors(config):
+            temp = store(neighbor)
+            if temp not in used_start:
+                q_start.append(neighbor)
+                used_start[temp] = steps + 1
+
+        # do same thing for end
+        config = q_end.popleft()
+        c = store(config)
+        steps = used_end[c]
+
+        if c in used_start:
+            print(steps + used_start[c])
+            found = True
+            break
+
+        for neighbor in get_neighbors(config):
+            temp = store(neighbor)
+            if temp not in used_end:
+                q_end.append(neighbor)
+                used_end[temp] = steps + 1
 
     if not found:
         print("IMPOSSIBLE")
