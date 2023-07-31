@@ -1,9 +1,8 @@
 # brute force through all combinations
 # passes the test cases for junior division
-# TLE on senior division
+# TLE on senior division, check the c++ version of this code for a solution that passes
 
 from collections import deque
-from copy import deepcopy
 
 # for each test case
 while True:
@@ -35,7 +34,7 @@ while True:
                 continue
 
             if i != 0 and (not config[i - 1] or config[i][-1] < config[i - 1][-1]):  # try moving left
-                new_config = deepcopy(config)
+                new_config = [i.copy() for i in config]
                 to_move = new_config[i].pop()
                 new_config[i - 1].append(to_move)  # move coin to the left
 
@@ -45,7 +44,7 @@ while True:
                     used.add(temp)
 
             if i != n - 1 and (not config[i + 1] or config[i][-1] < config[i + 1][-1]):  # try moving right
-                new_config = deepcopy(config)
+                new_config = [i.copy() for i in config]
                 to_move = new_config[i].pop()
                 new_config[i + 1].append(to_move)  # move coin to the right
 
