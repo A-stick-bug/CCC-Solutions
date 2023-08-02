@@ -1,7 +1,7 @@
 # the grid is technically weighted (weights can be 0 or 1)
 # therefore, we need to use Dijkstra's algorithm
 
-# -1 O2, if the current elevation or the next elevation > grid[1][1]
+# +1 oxygen used, if the current elevation or the next elevation > grid[1][1]
 # also, we can only go to adjacent cells with an absolute difference of less than 3
 
 import heapq
@@ -19,7 +19,7 @@ for case in range(1, test_cases + 1):
 
     found_path = False
     visited = [[False for _ in range(n + 1)] for _ in range(n + 1)]
-    visited[1][1] = True  # starting locationrg
+    visited[1][1] = True  # starting location
     pq = [(0, 1, 1)]  # (cost, row, col)
 
     while pq:
@@ -36,7 +36,7 @@ for case in range(1, test_cases + 1):
                     continue
 
                 visited[new_r][new_c] = True
-                new_cost = cost + (grid[row][col] > lowest or grid[new_r][new_c] > lowest)
+                new_cost = cost + (grid[row][col] > lowest or grid[new_r][new_c] > lowest)  # True = 1, False = 0
                 heapq.heappush(pq, (new_cost, new_r, new_c))
 
     if not found_path:
