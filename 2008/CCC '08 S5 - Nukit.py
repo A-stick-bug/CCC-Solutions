@@ -12,17 +12,16 @@ reactions = [[2, 1, 0, 2], [1, 1, 1, 1], [0, 0, 2, 1], [0, 3, 0, 0], [1, 0, 0, 1
 @cache
 def can_win(a, b, c, d):
     if a < 0 or b < 0 or c < 0 or d < 0:
-        return False
+        return True
 
-    win = True
+    win = False
     for aa, bb, cc, dd in reactions:
-        if can_win(a - aa, b - bb, c - cc, d - dd):
-            win = False
+        if not can_win(a - aa, b - bb, c - cc, d - dd):
+            win = True
 
     return win
 
 
 for _ in range(int(input())):
     vals = list(map(int, input().split()))
-    w = can_win(*vals)
-    print("Roland" if w else "Patrick")
+    print("Patrick" if can_win(*vals) else "Roland")  # check is Patrick can win
