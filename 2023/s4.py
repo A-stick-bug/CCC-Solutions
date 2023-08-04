@@ -1,47 +1,54 @@
-# because the distance between 2 intersections must not be more than the current
-# we can remove an edge and if it doesn't affect the shortest distance between points
-# start doing this from the costly edges to save the most money
+# Kruskal's algorithm but reversed and instead of using a disjoint set to check for connection
+# we use Dijkstra's algorithm to check if REMOVING an edges increases the distance between the 2 points that it connects
+# n^2 * log(n), since N and close to M
+
+import heapq
 
 
-class UnionFind:
-    def __init__(self, size):
-        self.root = [i for i in range(size)]
-        self.rank = [1] * size
+def distance(start, end):
+    pq = [(0, start)]
+    distances = [float('inf')] * (n_nodes+1)
+    distances[start] = 0
 
-    def find(self, x):
-        if x == self.root[x]:
-            return x
-        self.root[x] = self.find(self.root[x])
-        return self.root[x]
+    while pq:
+        dist, node = heapq.heappop(pq)
+        if node == end:
+            return dist
 
-    def union(self, x, y):
-        rootX = self.find(x)
-        rootY = self.find(y)
-        if rootX != rootY:
-            if self.rank[rootX] > self.rank[rootY]:
-                self.root[rootY] = rootX
-            elif self.rank[rootX] < self.rank[rootY]:
-                self.root[rootX] = rootY
-            else:
-                self.root[rootY] = rootX
-                self.rank[rootX] += 1
+        for adj, adj_dist, _, i in graph[node]:  # cost is ignored
+            if i in cannot_use:  # not allowed to use this edge
+                continue
+
+            new_dist = dist + adj_dist
+            if distances[adj] > new_dist:
+                heapq.heappush(pq, (new_dist, adj))
+                distances[adj] = new_dist
+
+    return float('inf')  # no path
 
 
 n_nodes, n_edges = map(int, input().split())
 edges = []
-for _ in range(n_edges):
-    edges.append(list(map(int, input().split())))
+graph = [[] for _ in range(n_nodes + 1)]
+cannot_use = set()  # a set of 'removed' edges
+
+for i in range(n_edges):
+    a, b, dist, cost = map(int, input().split())
+    edges.append((a, b, dist, cost, i))  # each edge is given an 'id'
+    graph[a].append((b, dist, cost, i))  # both directions are technically the same edge
+    graph[b].append((a, dist, cost, i))
+
+# sort by distance, this will guarantee that after we remove edges, the paths wil lstill be shortest
 edges.sort(key=lambda x: x[3], reverse=True)
 
-mst = UnionFind(n_nodes + 1)
-mst_edges = 0
-cost = 0
-for a, b, _, c in edges:
-    if mst_edges == n_nodes - 1:  # full mst
-        break
-    if mst.find(a) != mst.find(b):  # add edge
-        cost += c
-        mst.union(a, b)
-        mst_edges += 1
+total_cost = 0
+for a, b, _, c, id in edges:
+    # try REMOVING an edge
+    original = distance(a, b)
 
-print(cost)
+    cannot_use.add(id)  # check distance without this road
+    if distance(a, b) > original:  # we must use this road, otherwise the distance will be longer
+        cannot_use.remove(id)
+        total_cost += c
+
+print(total_cost)
