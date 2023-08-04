@@ -1,6 +1,6 @@
-# Kruskal's algorithm but reversed and instead of using a disjoint set to check for connection
+# Kruskal's algorithm but reversed, instead of using a disjoint set to check for connection
 # we use Dijkstra's algorithm to check if REMOVING an edges increases the distance between the 2 points that it connects
-# n^2 * log(n), since N and close to M
+# O(n^2 * log(n)), since N is close to M
 
 import heapq
 
