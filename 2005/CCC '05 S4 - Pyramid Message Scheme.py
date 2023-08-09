@@ -1,6 +1,5 @@
 # Tree data structure, basically just finding how many 'layers' it has
-# hard part is taking in input and turning it into a graph
-
+# that will be the maximum number of layers in the stack
 
 for _ in range(int(input())):
     n = int(input())

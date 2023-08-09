@@ -38,7 +38,7 @@ for i in range(n_edges):
     graph[a].append((b, dist, cost, i))  # both directions are technically the same edge
     graph[b].append((a, dist, cost, i))
 
-# sort by distance, this will guarantee that after we remove edges, the paths wil lstill be shortest
+# sort by distance, this will guarantee that after we remove edges, the paths will still be shortest
 edges.sort(key=lambda x: x[3], reverse=True)
 
 total_cost = 0
