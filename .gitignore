@@ -1,1 +1,4 @@
 to_do/
+*.ini
+*.png
+*.pyc
