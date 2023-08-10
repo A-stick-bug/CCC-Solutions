@@ -1,31 +1,26 @@
-# 7/15 TLE, probably because converting each state to tuple takes too long for large n, and too much memory
-# cellular automata rule 18
-
 n, times = map(int, input().split())
 row = list(map(int, list(input())))
-states = {}
-states_i = {}
-found = False
 
-for i in range(times):
-    new_state = [0] * n
 
-    new_state[0] = row[1] ^ row[-1]
-    new_state[-1] = row[0] ^ row[-2]
-    for cell in range(1, n - 1):  # first and last done separately because it is a circle
-        new_state[cell] = row[cell - 1] ^ row[cell + 1]
+def log2(n):
+    result = 0
+    while n > 1:
+        n //= 2
+        result += 1
+    return result
+
+
+while times > 0:
+    new_state = []
+    p2 = 2 ** log2(times)
+
+    for i in range(n):
+        left = (i - p2) % n
+        right = (i + p2) % n
+        cell = row[left] ^ row[right]  # XOR
+        new_state.append(cell)
 
     row = new_state.copy()
+    times -= p2
 
-    temp = tuple(row)
-    if temp in states:
-        final_state = times % (i - states[temp])
-        print(*states_i[final_state - 1], sep="")
-        found = True
-        break
-
-    states[temp] = i
-    states_i[i] = temp
-
-if not found:
-    print(*row, sep="")
+print(*row, sep="")
