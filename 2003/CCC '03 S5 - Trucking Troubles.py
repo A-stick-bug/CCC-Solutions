@@ -35,12 +35,12 @@ roads.sort(reverse=True, key=lambda x: x[2])  # sort by weight descending, looki
 mst = UnionFind(n_cities + 1)
 
 res = float('inf')
-for start, end, cost in roads:
+for start, end, weight in roads:
     if not destinations:  # we don't need all the edges inside our mst, only the destinations
         break
     if mst.find(start) != mst.find(end):  # does not create a cycle
         mst.union(start, end)
-        res = min(res, cost)
+        res = min(res, weight)
 
         if start in destinations:  # can now reach these destinations
             destinations.remove(start)
