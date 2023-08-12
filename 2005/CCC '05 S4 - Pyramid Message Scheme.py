@@ -17,5 +17,6 @@ for _ in range(int(input())):
 
         res = max(len(stack) - 1, res)  # minus one because for n connected nodes (in a line), there are n-1 edges
         # print(stack)
-
-    print((n - res * 2) * 10)
+    
+    # x2 because a message needs to be sent back and forth (double the time)
+    print((n - res * 2) * 10)  # this is the time saved compared to old strategy (x10 as required by the question)
