@@ -8,7 +8,7 @@ x2, y2 = map(int,input().split())
 q = deque()
 q.append((x1,y1))
 
-directions = [(1,2),(2,1),(-1,2),(2,-1),(1,-2),(-2,1),(-1,-2),(-2,-1)]
+directions = [(1, 2), (2, 1), (-1, 2), (2, -1), (1, -2), (-2, 1), (-1, -2), (-2, -1)]
 distance = [[float('inf') for _ in range(9)] for _ in range(9)]
 distance[x1][y1] = 0
 
@@ -25,4 +25,3 @@ while q:
         if 1 <=new_x <= 8 and 1 <= new_y <= 8 and not visited[new_x][new_y]:
             q.append((new_x,new_y))
             distance[new_x][new_y] = min(distance[new_x][new_y], distance[x][y] + 1)
-
