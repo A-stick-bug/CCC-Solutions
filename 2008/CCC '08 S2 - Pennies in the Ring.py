@@ -15,6 +15,5 @@ while True:
     # find the amount of points inside the circle for 1 quadrant
     for i in range(r + 1):
         total += dist(i)
-        print(dist(i))
 
     print(total * 4 + 1)  # x4 to account for all 4 quadrants and +1 because for some reason my output is always 1 less
