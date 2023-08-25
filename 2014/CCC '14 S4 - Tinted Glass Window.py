@@ -1,3 +1,6 @@
+# Using 2D difference array/PSA plus coordinate compression (coordinates go up to a billion)
+# O(n^2) where n is the number of glass (technically the number of unique x and y coordinates for the difference array)
+
 from sys import stdin
 
 input = stdin.readline
