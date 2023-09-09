@@ -1,35 +1,56 @@
-# 7/15 TLE, need rolling hash
+import sys
 
-from collections import Counter
-
+# take input and create frequency arrays
 needle = input()
-permutation = Counter(needle)
+ln = len(needle)
+letters = [0] * 26  # any substring with the same letter frequency as this is an answer
+for char in needle:
+    letters[ord(char) - 97] += 1
+
 haystack = input()
+lh = len(haystack)
 
-used = set()
+hashes = set()
+if ln > lh:  # corner case: haystack is longer than needle
+    print(0)
+    sys.exit()
 
+# compute the stuff for rolling hash
+#######################
+p = 29  # only a-z (26 letters) so this base is fine
 
-def solve():
-    sub = Counter(haystack[:len(needle)])
+# an alternate method is double hashing: hash with 2 different prime numbers
+# when both hashes match another string's they are (probably) the same
+mod = 177635683940025046467781066894531
 
-    res = 0
-    if len(needle) > len(haystack):
-        return 0
+# precompute the powers of p, so we can take the modulus and prevent overflow
+power = [1] * (lh + 1)
+for i in range(1, lh + 1):
+    power[i] = (power[i - 1] * p) % mod
 
-    for left in range(len(haystack) - len(needle) + 1):
-        right = left + len(needle)-1
+hash_values = [0] * (lh + 1)
+for i in range(lh):
+    hash_values[i + 1] = (hash_values[i] + (ord(haystack[i]) - 97 + 1) * power[i]) % mod
+#######################
 
-        if permutation == sub:
-            window = tuple(haystack[left:right+1])
-            if window not in used:
-                res += 1
-                used.add(window)
+# handle the first substring seperately because we have to build the frequency array
+freq = [0] * 26
+for i in range(ln):
+    freq[ord(haystack[i]) - 97] += 1
 
-        if right != len(haystack)-1:
-            sub[haystack[left]] -= 1
-            sub[haystack[right+1]] += 1
+if letters == freq:
+    current_hash = (hash_values[0 + ln] - hash_values[0] + mod) % mod
+    current_hash = (current_hash * power[lh - 0 - ln]) % mod
+    hashes.add(current_hash)
 
-    return res
+for i in range(1, lh - ln + 1):
+    freq[ord(haystack[i-1]) - 97] -= 1  # slide substring window
+    freq[ord(haystack[i + ln - 1]) - 97] += 1
 
+    current_hash = (hash_values[i + ln] - hash_values[i] + mod) % mod
+    current_hash = (current_hash * power[lh - i - ln]) % mod
 
-print(solve())
+    if letters == freq:
+        hashes.add(current_hash)
+
+print(len(hashes))
