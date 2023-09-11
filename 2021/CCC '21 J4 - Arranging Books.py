@@ -34,12 +34,12 @@ sl, ls = sl - ls_swap, ls - ls_swap
 # swap S and M
 sm_swap = min(sm, ms)
 swaps += sm_swap
-sm, ms = sm-sm_swap, ms-sm_swap
+sm, ms = sm - sm_swap, ms - sm_swap
 
 # swap M and L
 ml_swap = min(ml, lm)
 swaps += ml_swap
-ml, lm = ml-ml_swap, lm-ml_swap
+ml, lm = ml - ml_swap, lm - ml_swap
 
 # print(ls , sl , ml , lm , sm , ms)
 
@@ -50,7 +50,7 @@ sl -= slm
 lm -= slm
 ms -= slm
 
-sml = min(ls,ml,sm)
+sml = min(ls, ml, sm)
 swaps += 2 * sml
 ls -= slm
 ml -= slm
