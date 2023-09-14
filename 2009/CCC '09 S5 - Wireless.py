@@ -1,6 +1,8 @@
 # MLE on last three cases, the c++ solution is the exact same but passes because c++ is faster
+
 # I would recommend checking out 2008 S2 first if you haven't
-# using difference arrays for O(n) range update
+# using difference arrays for O(n) range update (instead of O(n^2))
+# O(1) range update is impossible because for each row, we update a difference range
 
 from math import floor
 
@@ -15,11 +17,13 @@ for _ in range(k):
     col -= 1  # turn into 0-indexing
     row -= 1
 
+    # for each row, calculate the range we need to update
     for i in range(max(0, row - radius), min(ROWS - 1, row + radius) + 1):  # make sure we stay in range
-        r_dist = abs(i - row)  # up-down distance
+        r_dist = abs(i - row)  # up-down distance, use this to find width using pythagorean theorem
         width = dist(r_dist, radius)
 
-        start = max(0, col - width)
+        # update difference array using width and the circle's center
+        start = max(0, col - width)  # don't go out of bounds
         end = min(COLS - 1, col + width)
         diff[i][start] += rate
         diff[i][end + 1] -= rate
