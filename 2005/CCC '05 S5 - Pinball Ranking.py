@@ -37,15 +37,15 @@ n = int(input())
 # precompute the ranks (basically coordinate compression)
 scores = [int(input()) for _ in range(n)]
 ordered = sorted(list(set(scores)))
-rank = {ordered[i]: i for i in range(len(ordered))}
+compress = {ordered[i]: i for i in range(len(ordered))}
 
 total = 0
 bit = FenwickTree(n)
 
 for i in range(1, n + 1):  # i is how many elements are in scores during this iteration
-    # use the rank, not the actual value
-    score = rank[scores[i - 1]]
-    place = bit.query(score + 1)  # 1-indexed queries so +1
+    # use the compressed value
+    score = compress[scores[i - 1]]
+    place = bit.query(score + 1)  # get the insert position (ranking), 1-indexed queries so +1
     total += i - place  # reverse rank because scores are in increasing order
 
     bit.update(score + 1, 1)  # add the new score by increasing its count by 1
