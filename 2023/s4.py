@@ -42,12 +42,10 @@ for i in range(n_edges):
 edges.sort(key=lambda x: x[3], reverse=True)
 
 total_cost = 0
-for a, b, _, c, id in edges:
+for a, b, dist, c, id in edges:
     # try REMOVING an edge
-    original = distance(a, b)
-
     cannot_use.add(id)  # check distance without this road
-    if distance(a, b) > original:  # we must use this road, otherwise the distance will be longer
+    if distance(a, b) > dist:  # we must use this road, otherwise the distance will be longer
         cannot_use.remove(id)
         total_cost += c
 
