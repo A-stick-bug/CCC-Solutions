@@ -1,31 +1,27 @@
-from collections import defaultdict
+# using a hash table
+# queries are 1-indexed so we minus 1
 
-ROWS = int(input())
-COLS = int(input())
-row_choice = defaultdict(int)
-col_choice = defaultdict(int)
-painting = [[0 for _ in range(COLS)] for _ in range(ROWS)]
+R = int(input())
+C = int(input())
 
-for i in range(int(input())):
-    choice = input().split()
-    if choice[0] == "R":
-        row_choice[int(choice[1]) - 1] += 1
+rows = [False] * R  # False: Black, True: Gold
+cols = [False] * C
+
+queries = int(input())
+for _ in range(queries):
+    t, i = input().split()
+    if t == "R":
+        rows[int(i) - 1] = not rows[int(i) - 1]  # B --> G or G --> B
     else:
-        col_choice[int(choice[1]) - 1] += 1
+        cols[int(i) - 1] = not cols[int(i) - 1]
 
-for row in row_choice.keys():
-    if row_choice[row] % 2 == 1:
-        painting[row] = list(map(lambda x: x + 1, painting[row]))
+grid = [[False] * C for _ in range(R)]  # create the actual grid based on what rows/cols were flipped
+for r in range(R):
+    if rows[r]:
+        grid[r] = [True] * C
+for c in range(C):
+    if cols[c]:
+        for r in range(R):
+            grid[r][c] = not grid[r][c]
 
-for col in col_choice.keys():
-    if col_choice[col] % 2 == 1:
-        for i in range(ROWS):
-            painting[i][col] += 1
-
-
-total = 0
-for i in painting:
-    for j in i:
-        if j%2 ==1:
-            total += 1
-print(total)
+print(sum(sum(row) for row in grid))
