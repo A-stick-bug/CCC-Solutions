@@ -1,10 +1,14 @@
-# the grid is technically weighted (weights can be 0 or 1)
-# therefore, we need to use Dijkstra's algorithm
+"""
+The grid is technically weighted (weights can be 0 or 1)
+Instead of Dijkstra's algorithm, we can use 0-1 BFS, which is faster
+- if an edge's cost is 0, we append to left of queue, if it is 1, we append to right
 
-# +1 oxygen used, if the current elevation or the next elevation > grid[1][1]
-# also, we can only go to adjacent cells with an absolute difference of less than 3
++1 oxygen used, if the current elevation or the next elevation > grid[1][1]
+also, we can only go to adjacent cells with an absolute difference of 2 or less
 
-import heapq
+"""
+
+from collections import deque
 
 directions = [(1, 0), (0, 1), (-1, 0), (0, -1)]
 test_cases = int(input())
@@ -20,10 +24,10 @@ for case in range(1, test_cases + 1):
     found_path = False
     visited = [[False for _ in range(n + 1)] for _ in range(n + 1)]
     visited[1][1] = True  # starting location
-    pq = [(0, 1, 1)]  # (cost, row, col)
+    q = deque([(0, 1, 1)])  # (cost, row, col)
 
-    while pq:
-        cost, row, col = heapq.heappop(pq)
+    while q:
+        cost, row, col = q.popleft()
         if row == n and col == n:  # found path to end
             found_path = True
             print(cost)
@@ -36,8 +40,12 @@ for case in range(1, test_cases + 1):
                     continue
 
                 visited[new_r][new_c] = True
-                new_cost = cost + (grid[row][col] > lowest or grid[new_r][new_c] > lowest)  # True = 1, False = 0
-                heapq.heappush(pq, (new_cost, new_r, new_c))
+                new_cost = grid[row][col] > lowest or grid[new_r][new_c] > lowest  # True = 1, False = 0
+
+                if new_cost:
+                    q.append((cost + 1, new_r, new_c))  # costs 1
+                else:
+                    q.appendleft((cost, new_r, new_c))  # no cost, we put it in the left
 
     if not found_path:
         print("CANNOT MAKE THE TRIP")
