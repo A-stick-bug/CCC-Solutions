@@ -1,3 +1,6 @@
+# method is correct but TLE because python is too slow
+# O(n*log(n))
+
 class FenwickTree:
     def __init__(self, size):
         self.size = size
