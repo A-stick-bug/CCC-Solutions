@@ -11,22 +11,7 @@
 
 # all subtasks (4-6 X)
 # for many possible placements of X, we can just use the fill_certain function up to 6 times to get an answer
-# if we can't get an answer from using fill_certain, it will at least bring us to one of these possible states
-
-# 1 row, 1 column (total 9 cases with different positions of row and column)
-# O O O
-# O X X
-# O X X
-# for this specific state, the middle X is the top left corner + the row and column difference
-
-# no common rows/columns
-# O O X
-# O X O
-# X O O
-# -----
-# X O O
-# O O X
-# O X O
+# if we can't get an answer from using fill_certain, we just brute force possible values with backtracking
 
 import sys
 
@@ -112,7 +97,7 @@ elif x == 7:  # 2 empty
     if rotated:
         res = rotate(res)
 
-elif not is_correct(res):  # not filled yet, meaning we reached one of the 3 possible states
+elif not is_correct(res):  # not filled yet, start brute forcing
     ...
 
 assert is_correct(res)
