@@ -2,7 +2,7 @@
 
 # I would recommend checking out 2008 S2 first if you haven't
 # using difference arrays for O(n) range update (instead of O(n^2))
-# O(1) range update is impossible because for each row, we update a difference range
+# O(1) range update is impossible because for each row, we update a different range
 
 from math import floor
 
