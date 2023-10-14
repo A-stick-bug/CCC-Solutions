@@ -1,4 +1,5 @@
 # time-consuming question, and lots of case work
+# got 13/15 because good rng
 
 # let x be the number of unknown numbers
 
@@ -11,9 +12,10 @@
 
 # all subtasks (4-6 X)
 # for many possible placements of X, we can just use the fill_certain function up to 6 times to get an answer
-# if we can't get an answer from using fill_certain, we just brute force possible values with backtracking
+# if not, we can fill the middle number with ANYTHING (you can try this out by hand)
 
 import sys
+from random import randint  # :)
 
 
 # check if the current grid is valid
@@ -43,7 +45,16 @@ def fill_certain():  # for filling rows with only 1 unknown
                 res[i][1] = (res[i][0] + res[i][2]) // 2
 
 
-def get_n():
+def fill_all():  # tries to fill everything
+    global res
+    for _ in range(6):  # there are 6 rows/columns total which is how many times we must fill at most
+        fill_certain()
+        res = rotate(res)  # rotate to do columns
+        fill_certain()
+        res = rotate(res)  # rotate it back
+
+
+def get_n():  # get coordinates that are not x
     x = []
     for i in range(3):
         for j in range(3):
@@ -64,11 +75,7 @@ res = [i.copy() for i in grid]
 
 x = count_x(grid)
 if x < 7:
-    for _ in range(6):  # there are 6 rows/columns total which is how many times we must fill at most
-        fill_certain()
-        res = rotate(res)  # rotate to do columns
-        fill_certain()
-        res = rotate(res)  # rotate it back
+    fill_all()
 
 elif x >= 8:  # use same number (d = 0)
     a = 1  # placeholder
@@ -78,9 +85,9 @@ elif x >= 8:  # use same number (d = 0)
                 a = num
     res = [[a] * 3 for _ in range(3)]
 
-elif x == 7:  # 2 empty
-    rotated = False  # for only 2 empty, we can make all rows the same (rotate if one row as both numbers)
-    if any([row.count("X") < 2 for row in grid]):
+elif x == 7:  # 2 unknowns
+    rotated = False
+    if any([row.count("X") < 2 for row in grid]):  # if the 2x are on the same column, we make it rows instead
         res = rotate(res)
         rotated = True
     x1, x2 = get_n()
@@ -89,16 +96,19 @@ elif x == 7:  # 2 empty
     res[r1] = [res[r1][c1]] * 3
     res[r2] = [res[r2][c2]] * 3
 
-    # let the function handle the rest as there will only be one unknown row
-    res = rotate(res)
-    fill_certain()
-    res = rotate(res)
+    fill_all()  # now we can determine the numbers in every cell
 
-    if rotated:
-        res = rotate(res)
-
-elif not is_correct(res):  # not filled yet, start brute forcing
-    ...
+# for 4-6, we can put anything in the middle
+# we might have to try a few times because of decimals, it will eventually give the answer though
+while not is_correct(res):
+    for _ in range(4):
+        if res[1][1] == "X":
+            res[1][1] = randint(-1000, 1000)
+            fill_all()
+        elif res[0][0] == "X":
+            res[0][0] = randint(-1000, 1000)
+            fill_all()
+        res = list(map(list, list(zip(*res[::-1]))))  # 90 degree rotate
 
 assert is_correct(res)
 for r in res:
