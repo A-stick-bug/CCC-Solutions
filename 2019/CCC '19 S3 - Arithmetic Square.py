@@ -101,14 +101,19 @@ elif x == 7:  # 2 unknowns
 # for 4-6, we can put anything in the middle
 # we might have to try a few times because of decimals, it will eventually give the answer though
 while not is_correct(res):
-    for _ in range(4):
-        if res[1][1] == "X":
-            res[1][1] = randint(-1000, 1000)
-            fill_all()
-        elif res[0][0] == "X":
-            res[0][0] = randint(-1000, 1000)
-            fill_all()
-        res = list(map(list, list(zip(*res[::-1]))))  # 90 degree rotate
+    if res[1][1] == "X":
+        res[1][1] = randint(-1000, 1000)
+        fill_all()
+        if not is_correct(res):
+            res[1][1] = "X"  # didn't work, reset it
+
+            for _ in range(4):
+                if res[0][0] == "X":
+                    res[0][0] = randint(-1000, 1000)
+                    fill_all()
+                    if not is_correct(res):
+                        res[0][0] = "X"
+                res = list(map(list, list(zip(*res[::-1]))))  # 90 degree rotate
 
 assert is_correct(res)
 for r in res:
