@@ -46,8 +46,8 @@ for n1, n2, cost in edges:
         mst.append((n1, n2, cost))
 
 mst_set, original_set = set(mst), set(current)
-no_pipe = len(mst_set - original_set)  # time it takes, assuming no pipe usage
-if d == 0:  # no pipe enhancer
+no_pipe = len(mst_set - original_set)  # time it takes to switch to mst, assuming no pipe enhancer
+if d == 0:
     print(no_pipe)
     sys.exit()
 
