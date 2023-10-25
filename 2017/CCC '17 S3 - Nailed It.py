@@ -1,20 +1,18 @@
 n = int(input())
-boards = list(map(int, input().split()))
+arr = list(map(int, input().split()))
 
-# how many times each length appears
-length = [0] * 2001
-for board in boards:
-    length[board] += 1
+count = [0] * 2001  # frequency array
+for i in arr:
+    count[i] += 1
 
-combinations = [0] * 4001
-
-for i in range(2000):
+res = [0] * 4001  # res[i] is the length of fence with height i
+for i in range(2001):
     for j in range(i, 2001):
         if i == j:
-            combinations[i + j] += length[i] // 2
+            res[i + j] += count[i] // 2
         else:
-            combinations[i + j] += min(length[i], length[j])
+            res[i + j] += min(count[i], count[j])
 
-longest = max(combinations)
-count = combinations.count(longest)
-print(longest, count)
+max_length = max(res)
+heights = res.count(max_length)
+print(max_length, heights)

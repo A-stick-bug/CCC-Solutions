@@ -30,7 +30,7 @@ while True:
 
     dist = [-1] * (n + 1)  # distances to nodes in the current path, this is how we get the length of cycles
     cycles = []
-    for node in range(1, n+1):
+    for node in range(1, n + 1):
         if dist[node] == -1:  # not processed yet
             cycles.append(dfs(node, 0))
 
