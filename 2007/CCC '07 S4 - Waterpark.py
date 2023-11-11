@@ -1,4 +1,4 @@
-# 15/15, top-down dynamic programming
+# dynamic programming, similar to 2012 S5 but on a graph instead of matrix
 # number of ways to get to a node is the sum of the number of ways to get to its parents nodes
 
 import functools
@@ -6,20 +6,20 @@ import functools
 n = int(input())
 
 # note: this is a DAG (no cycles)
-# basically each edge points the other way around
-parents = [[] for _ in range(n+1)]
+parents = [[] for _ in range(n + 1)]
 
 while True:
     start, end = map(int, input().split())
     if start == 0 and end == 0:
         break
-    parents[end].append(start)
+    parents[start].append(end)
 
 
-# need the cache to avoid computing the paths to a node multiple times
+# DFS search of all paths (no need to keep track of visited because it's a DAG)
+# MUST have the cache to avoid computing a node more than one, without this, the time complexity will be exponential
 @functools.cache
 def find_paths(node):
-    if node == 1:
+    if node == n:
         return 1
 
     total = 0
@@ -28,24 +28,4 @@ def find_paths(node):
     return total
 
 
-print(find_paths(n))
-
-
-# # bottom-up solution (less intuitive)
-# n = int(input())
-# graph = [[] for _ in range(n + 1)]  # no cycles (DAG)
-#
-# while True:
-#     start, end = map(int, input().split())
-#     if start == 0 and end == 0:
-#         break
-#     graph[start].append(end)
-#
-# dp = [1]
-# for x in reversed(range(1, n)):
-#     res = 0
-#     for y in graph[x]:
-#         res += dp[n - y]
-#     dp.append(res)
-#
-# print(dp[-1])
+print(find_paths(1))
