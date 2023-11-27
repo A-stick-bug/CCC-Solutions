@@ -26,10 +26,6 @@ while pq:
         print(time)
         sys.exit()
 
-    # already processed this, can skip
-    if time > dist[island][damage]:
-        continue
-
     for adj, adj_time, adj_damage in graph[island]:
         new_time = time + adj_time
         new_damage = damage + adj_damage
