@@ -42,9 +42,9 @@ for start, end, weight in roads:
         mst.union(start, end)
         res = min(res, weight)
 
-        if start in destinations:  # can now reach these destinations
-            destinations.remove(start)
-        if end in destinations:
-            destinations.remove(end)
+        if mst.find(start) == mst.find(1):
+            destinations.discard(start)
+        if mst.find(end) == mst.find(1):
+            destinations.discard(end)
 
 print(res)
