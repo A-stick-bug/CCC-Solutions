@@ -22,7 +22,7 @@ pq = [(0, start, 0)]  # (distance, island, damage)
 
 while pq:
     time, island, damage = heapq.heappop(pq)
-    if island == end and damage < hull:
+    if island == end:
         print(time)
         sys.exit()
 
