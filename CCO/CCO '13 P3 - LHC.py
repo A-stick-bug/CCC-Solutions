@@ -11,6 +11,7 @@ Approach:
 
 """
 
+from collections import defaultdict
 
 n = int(input())
 graph = [[] for _ in range(n + 1)]
@@ -42,13 +43,11 @@ diameter, end2 = dfs(end1)
 def match_branches(paths):
     """finds how many ways you can join 2 branches together to get the diameter (literally 2-Sum)"""
     total = 0
-    freq = {}
-    for path in paths:
-        if diameter - path[0] in freq:
-            total += path[1] * freq[diameter - path[0]]
-        if path[0] not in freq:
-            freq[path[0]] = 0
-        freq[path[0]] += path[1]
+    freq = defaultdict(int)
+    for path, cnt in paths:
+        if diameter - path in freq:
+            total += cnt * freq[diameter - path]
+        freq[path] += cnt
     return total
 
 
