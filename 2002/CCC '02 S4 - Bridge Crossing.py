@@ -1,41 +1,69 @@
-limit, n = int(input()), int(input())  # max people per group, number of people
-people, time = [], [0]
-for _ in range(n):
-    people.append(input())
-    time.append(int(input()))
+# Fibonacci style sequence DP
+# for each person, we can make a group of size [1, M], use the one that takes the least time
+# dp[i] is the minimum time to let the first i people through
+#
+# note: we don't bother with data structures/optimization since the constraints are low
+# also, everything is 1-indexed for convenience
+# TC: O(M^2*Q)
 
-dp = [float('inf')] * (n + 1)
-dp[0] = 0
-group_size = [0] * (n + 1)
+M = int(input())
+Q = int(input())
+people = [(-1, -1)] + [(input(), int(input())) for _ in range(Q)]  # (name, time), 1-indexed
 
-for i in range(1, n + 1):
-    _max = time[i]
-    for j in range(1, min(i, limit) + 1):
-        if dp[i] > dp[i - j] + _max:
-            dp[i] = dp[i - j] + _max
-            group_size[i] = i - j
-        _max = max(_max, time[i - j])
+prev = [0] * (Q + 1)  # keep track of previous choice to build sequence
+dp = [0] * (Q + 1)
 
-i = n
-groups = []
-while i > 0:
-    groups.append([people[x] for x in range(group_size[i], i)])  # get the people in each group
-    i = group_size[i]
+for i in range(1, Q + 1):
+    best = float('inf')
+    for j in range(max(1, i - M + 1), i + 1):  # try all group sizes using previously computed values
+        time = max(people[j:i + 1], key=lambda x: x[1])[1] + dp[j - 1]  # (max in current group) + (previous groups)
+        if time < best:
+            best = time  # found better answer
+            prev[i] = j - 1
 
-print(f'Total Time: {dp[n]}')
-for group in reversed(groups):
-    print(' '.join(group))
+    dp[i] = best
 
-# example test case
-# 3
-# 5
-# a
-# 1
-# b
-# 2
-# c
-# 5
-# d
-# 3
-# e
-# 3
+# print(prev)
+# print(dp)
+
+cur = Q
+res = []
+while cur != 0:
+    group = []  # recreate each group
+    for i in range(prev[cur] + 1, cur + 1):
+        group.append(people[i][0])
+
+    res.append(group.copy())
+    cur = prev[cur]
+
+print(f"Total Time: {dp[-1]}")
+for i in reversed(res):
+    print(" ".join(i))
+
+"""
+2
+3
+a
+3
+b
+2
+c
+1
+
+output: 5
+
+3
+5
+a
+1
+b
+2
+c
+5
+d
+3
+e
+3
+
+Output: 7
+"""
