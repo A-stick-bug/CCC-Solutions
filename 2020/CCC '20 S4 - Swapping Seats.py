@@ -1,4 +1,6 @@
 # https://dmoj.ca/problem/ccc20s4
+# harder version of https://dmoj.ca/problem/ccc21j4
+# need prefix some arrays and observations to know how to swap most efficiently
 
 s = input() * 2  # double the array as usual in a circular question
 n = len(s)
