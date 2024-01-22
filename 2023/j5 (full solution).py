@@ -1,39 +1,33 @@
-# no palindromes so no need to track the words that are already found
+# tricky dfs
 
 word = input()
-ROWS = int(input())
-COLS = int(input())
-
-grid = []
-for i in range(ROWS):
-    grid.append(input().split())
-
-count = 0
-directions = [(-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1)]
+R = int(input())
+C = int(input())
+grid = [input().split() for _ in range(R)]
 
 
-def check(row, col, dr, dc, index, turned):
-    global count
-    if ROWS > row >= 0 and COLS > col >= 0 and grid[row][col] == word[index]:
-        # found the word
-        if index == len(word) - 1:
-            count += 1
-            return
+def search(r, c, turned, i, dr, dc):
+    if not (0 <= r < R and 0 <= c < C):  # out of bounds
+        return 0
+    if grid[r][c] != word[i]:  # didn't match word
+        return 0
+    if i == len(word) - 1:  # found word
+        return 1
 
-        # continue checking in direction
-        check(row + dr, col + dc, dr, dc, index + 1, turned)
-
-        # check perpendiculars
-        if not turned:
-            check(row - dc, col + dr, -dc, dr, index + 1, True)
-            check(row + dc, col - dr, dc, -dr, index + 1, True)
+    res = search(r + dr, c + dc, turned, i + 1, dr, dc)
+    if not turned:
+        res += search(r + dc, c - dr, True, i + 1, dc, -dr)  # change directions
+        res += search(r - dc, c + dr, True, i + 1, -dc, dr)  # perpendicular lines have negative reciprocal slope
+    return res
 
 
-for i in range(ROWS):
-    for j in range(COLS):
-        # if current tile matches first letter of word, search in all 8 directions
-        if grid[i][j] == word[0]:
-            for r, c in directions:
-                check(i + r, j + c, r, c, 1, False)
+dir_8 = [(1, 0), (0, 1), (-1, 0), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1)]
+total = 0
+for i in range(R):
+    for j in range(C):
+        if grid[i][j] == word[0]:  # matched start of word
+            for dr, dc in dir_8:
+                # note: we start on the second letter to prevent turning at the start
+                total += search(i + dr, j + dc, False, 1, dr, dc)
 
-print(count)
+print(total)
