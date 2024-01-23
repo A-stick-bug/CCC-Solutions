@@ -2,7 +2,7 @@
 Key observations:
 - the train and your starting location are the same
 - the train and walking are the same speed so the only place where it may be optimal to get on the train is the start
-  - otherwise, you can just ride the train to get to the node you are at (since you need to wait for the train anyway)
+  - otherwise, you can just walk to get to the node you are at (since you need to wait for the train anyway)
 - reversing the graph gets the shortest path from every node to the end
 
 To get 7/15 (there exists many other methods):

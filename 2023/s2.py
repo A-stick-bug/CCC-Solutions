@@ -32,4 +32,3 @@ for i in range(1, x - 1):
         length += 2
 
 print(*vals[1:], sep=" ")
-
