@@ -15,9 +15,10 @@ To minimize the cost when working backwards towards 1:
 
 def find_largest_factor(num):
     """Find the largest factor of num that != num"""
-    for i in reversed(range(num // 2 + 1)):
+    for i in range(2, int(num ** 0.5) + 1):
         if num % i == 0:
-            return i
+            return num // i
+    return 1  # couldn't find any, just subtract 1 from the number
 
 
 n = int(input())
@@ -30,3 +31,43 @@ while n != 1:
     n -= a
 
 print(cost)
+
+# # 10/15, DP solution that actually makes sense
+# # O(n*sqrt(n)), n states in total, sqrt(n) transitions due to factoring
+#
+# from math import isqrt
+#
+# n = int(input())
+#
+# inf = 1 << 30
+# dp = [inf] * (n + 1)
+# dp[n] = 0  # base case, our goal is n
+#
+# for cur in reversed(range(1, n + 1)):
+#     for fac in range(1, isqrt(cur) + 1):  # try all possible pairs (a, b)
+#         if cur % fac == 0:
+#             other = cur // fac
+#             if cur + fac <= n:
+#                 dp[cur] = min(dp[cur], other + dp[cur + fac])
+#             if cur + other <= n:
+#                 dp[cur] = min(dp[cur], fac + dp[cur + other])
+#
+# print(dp[1])
+
+# # recursive version
+# @cache
+# def solve(cur):
+#     if cur > n:  # too big, we can't decrease
+#         return 1 << 60
+#     if cur == n:
+#         return 0
+#     best = 1 << 60
+#     for fac in range(1, isqrt(cur) + 1):
+#         if cur % fac == 0:
+#             other = cur // fac
+#             best = min(best, other + solve(cur + fac), fac + solve(cur + other))
+#
+#     return best
+#
+#
+# print(solve(1))
