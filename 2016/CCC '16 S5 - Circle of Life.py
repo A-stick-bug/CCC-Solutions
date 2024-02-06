@@ -1,28 +1,16 @@
 # cellular automata rule 18, funny triangle thing (Sierpiński triangle)
+# basically there is a pattern when you jump by 2^x states
+# we can take advantage of this and compute 2^x steps at once in O(n)
+# TC: O(N*log(T))
 
 n, times = map(int, input().split())
-row = list(map(int, list(input())))
+state = list(map(int, list(input())))
 
-
-def log2(n):
-    result = 0
-    while n > 1:
-        n //= 2
-        result += 1
-    return result
-
+log2 = lambda x: x.bit_length() - 1  # log2 for integers
 
 while times > 0:
-    new_state = []
     p2 = 2 ** log2(times)
-
-    for i in range(n):
-        left = (i - p2) % n  # use mod because it is circular, this will automatically 'wrap around the edges'
-        right = (i + p2) % n
-        cell = row[left] ^ row[right]  # each state is the XOR of its neighbours
-        new_state.append(cell)
-
-    row = new_state.copy()
+    state = [state[(i - p2) % n] ^ state[(i + p2) % n] for i in range(n)]  # jump by p2 states
     times -= p2
 
-print(*row, sep="")
+print("".join(map(str, state)))
