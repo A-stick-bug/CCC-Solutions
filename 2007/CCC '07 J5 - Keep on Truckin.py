@@ -1,5 +1,5 @@
 # simple DP
-# O(m^2) where m is the number of motels
+# O(N^2) where N is the number of motels
 # dp[i] is the number of ways to get motel[i]
 # minimum distance of a and maximum distance of b between 'jumps'
 
