@@ -1,7 +1,8 @@
 # Brute force BFS, save memory by converting state to base 10 number
 # Optimization: remove leading and trailing zeros (they don't affect anything)
-# Time complexity: O(n * 2^n)
-# O(2^n) possible states, O(n) to copy state
+# Time complexity: O(n^2 * 2^n)
+# O(2^n) possible states, O(n) states to transition to, O(n) to copy state
+# runs faster on average due to optimizations
 
 from collections import deque
 import sys
