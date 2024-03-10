@@ -1,102 +1,78 @@
-# 15/15, tricky BFS
-#
-# approach:
-# an extra copy of the map is made for cameras (more convenient than just turning them into walls)
-# for all conveyors, their cell will be turned into a (row, col) tuple of the cell that it eventually leads to
-# note that it is essentially a teleport because you are not taking steps on a conveyor
+"""
+https://dmoj.ca/problem/ccc18s3
+
+BFS with A LOT of implementation
+
+Notes:
+- first mark all cells visible by cameras (when we are on a conveyor, they are automatically ignored)
+  - if the starting cell is visible by a camera, don't run bfs and automatically print -1 for everything
+- now do bfs
+  - no need to check for bounds since the map is surrounded by walls
+  - if we are on a conveyor, we have to follow it all the way through, note that you don't
+    take any steps on the conveyor
+"""
 
 from collections import deque
 
-ROWS, COLS = map(int, input().split())
-graph = [list(input()) for _ in range(ROWS)]
-distances = [[10000 for _ in range(COLS)] for _ in range(ROWS)]  # distances to each cell
-cameras = [[False for _ in range(COLS)] for _ in range(ROWS)]  # cells that cameras can see
-flag = False  # if the starting cell is covered by camera, you cannot go anywhere
 
-# W: wall, S: start, dot: destinations+empty, C: cameras (4 directional)
-directions = [(0, 1), (1, 0), (-1, 0), (0, -1)]
+def handle_camera(r, c):
+    """mark every cell visible by this camera"""
+    for dr, dc in dir4:
+        nr, nc = r, c
+        while grid[nr][nc] != "W":
+            if grid[nr][nc] not in conveyor:
+                camera[nr][nc] = True
+            nr += dr
+            nc += dc
+
+
+def follow_conveyor(r, c):
+    while grid[r][c] in conveyor:
+        if dist[r][c] == -2:  # cycle in conveyor: just return te location of a wall
+            return 0, 0
+        dist[r][c] = -2  # placeholder value to prevent revisiting this cell
+        dr, dc = conveyor[grid[r][c]]
+        r += dr
+        c += dc
+    return r, c
+
+
+N, M = map(int, input().split())
+grid = [list(input()) for _ in range(N)]
+camera = [[False] * M for _ in range(N)]
+
+dir4 = [(0, 1), (1, 0), (-1, 0), (0, -1)]
+conveyor = {"D": (1, 0), "U": (-1, 0), "L": (0, -1), "R": (0, 1)}
+
+for i in range(N):  # mark cells visible by camera
+    for j in range(M):
+        if grid[i][j] == "C":
+            handle_camera(i, j)
+
 q = deque()
+dist = [[-1] * M for _ in range(N)]
+for i in range(N):  # find starting location
+    for j in range(M):
+        if grid[i][j] == "S" and not camera[i][j]:
+            q.append((i, j))
+            dist[i][j] = 0
 
-# handle cameras and get start
-for r in range(ROWS):
-    for c in range(COLS):
-        cell = graph[r][c]
+while q:  # run bfs while handling conveyors
+    r, c = q.popleft()
+    for dr, dc in dir4:
+        nr, nc = r + dr, c + dc
+        if grid[nr][nc] == "W" or camera[nr][nc] or dist[nr][nc] != -1:  # marked by camera or already visited
+            continue
 
-        if cell == "C":
-            # track cells visible to camera
-            for dr, dc in directions:
-                new_r, new_c = r + dr, c + dc
-                while graph[new_r][new_c] != "W":
-                    if graph[new_r][new_c] == ".":
-                        cameras[new_r][new_c] = True
-                    if graph[new_r][new_c] == "S":
-                        flag = True
-                    new_r += dr
-                    new_c += dc
+        if grid[nr][nc] in conveyor:  # move onto conveyor, follow it through
+            nr, nc = follow_conveyor(nr, nc)
+            if grid[nr][nc] == "W" or camera[nr][nc] or dist[nr][nc] != -1:  # end location of conveyor is invalid
+                continue
 
-        if cell == "S":
-            q.append((r, c))
-            distances[r][c] = 0
+        dist[nr][nc] = dist[r][c] + 1  # update distances of adjacent cell
+        q.append((nr, nc))
 
-
-def conveyor_to_wall(array):
-    rows = len(array)
-    cols = len(array[0])
-    directions = {'L': (0, -1), 'R': (0, 1), 'U': (-1, 0), 'D': (1, 0)}
-
-    def dfs(r, c):
-        if type(array[r][c]) == tuple:  # already calculated this, just use its value
-            return array[r][c]
-        elif array[r][c] not in directions:  # end of conveyor
-            return r, c
-
-        direction = array[r][c]
-        dr, dc = directions[direction]
-
-        array[r][c] = '#'  # mark as visited
-        res = dfs(r + dr, c + dc)  # (row, col)
-
-        if res == (r, c):  # came back to start: cycle detected, turn into wall
-            array[r][c] = 'W'
-        else:
-            array[r][c] = res  # set to the location it leads to as a (row, col) tuple
-        return res
-
-    for r in range(rows):
-        for c in range(cols):
-            if array[r][c] in directions:
-                r1, r2 = dfs(r, c)
-                if array[r1][r2] == 'W':  # dead end or cycle
-                    array[r][c] = 'W'
-
-    return array
-
-
-# do the BFS search
-graph = conveyor_to_wall(graph)  # add in the precomputed values
-if not flag:
-    while q:
-        row, col = q.popleft()
-        for dr, dc in directions:
-            new_r = row + dr
-            new_c = col + dc
-
-            # special case where there is a conveyor: go to wherever it leads to
-            if type(graph[new_r][new_c]) == tuple:
-                tp_r, tp_c = graph[new_r][new_c]
-
-                # check that conveyor actually leads to a valid location
-                if graph[tp_r][tp_c] == "." and not cameras[tp_r][tp_c] and distances[tp_r][tp_c] == 10000:
-                    q.append((tp_r, tp_c))
-                    distances[tp_r][tp_c] = min(distances[tp_r][tp_c], distances[row][col] + 1)
-                    continue
-
-            # regular path no conveyor and not caught by camera
-            if graph[new_r][new_c] == "." and not cameras[new_r][new_c] and distances[new_r][new_c] == 10000:
-                q.append((new_r, new_c))
-                distances[new_r][new_c] = min(distances[new_r][new_c], distances[row][col] + 1)
-
-for r in range(ROWS):
-    for c in range(COLS):
-        if graph[r][c] == ".":
-            print(distances[r][c] if distances[r][c] != 10000 and not flag else -1)
+for i in range(N):  # print answers
+    for j in range(M):
+        if grid[i][j] == ".":
+            print(dist[i][j])
