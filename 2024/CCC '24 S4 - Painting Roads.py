@@ -1,4 +1,6 @@
 # no idea why this works, proof by AC
+# approach: make dfs trees for each component, alternate between red and blue for each edge
+# TC: O(n)
 
 import sys
 
