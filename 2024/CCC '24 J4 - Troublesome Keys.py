@@ -1,7 +1,6 @@
 """
 https://dmoj.ca/problem/ccc24j4
 Using logic reasoning and a bit of implementation
-The question gives up many constraints on the 2 strings, so there are many methods of solving this.
 
 Note the following:
 - "Alex never actually tries to type the wrong letter displayed by the silly key"
@@ -9,6 +8,7 @@ Note the following:
 Using these 2 statements, we can reason that the character that only exists in the second string must
 be the result of the silly key
 
+Note that we add a common letter at the end of both strings to avoid handling cases like the quiet key being at the end.
 """
 
 s = input() + "."  # original string
