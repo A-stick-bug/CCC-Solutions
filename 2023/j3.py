@@ -1,26 +1,14 @@
-days = int(input())
+n = int(input())
+freq = [0] * 5
+for _ in range(n):
+    s = input()
+    for i in range(5):
+        if s[i] == "Y":
+            freq[i] += 1
 
-db = []
-
-for i in range(days):
-    people = list(input())
-    db.append(people)
-
-db = list(zip(*db))
-yeses = []
-
-for i in range(len(db)):
-    yes = db[i].count("Y")
-    yeses.append(yes)
-
-most = max(yeses)
-out = []
-
-for i, day in enumerate(yeses,start=1):
-    if day == most:
-        out.append(i)
-
-for i in range(len(out)-1):
-    print(out[i],end=",")
-
-print(out[-1],end="")
+res = []
+best = max(freq)
+for i in range(5):
+    if freq[i] == best:
+        res.append(i + 1)
+print(*res, sep=",")
