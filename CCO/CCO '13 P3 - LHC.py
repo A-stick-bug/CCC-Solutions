@@ -11,8 +11,10 @@ Approach:
 
 """
 
+import sys
 from collections import defaultdict
 
+input = sys.stdin.readline
 n = int(input())
 graph = [[] for _ in range(n + 1)]
 
@@ -85,3 +87,88 @@ if best == diameter:
     joined += times  # paths formed by only going down 1 path
 
 print(diameter + 1, joined)
+
+# # (TLE) alternate approach using centroid decomp (slower but more template)
+# from collections import defaultdict
+# import sys
+#
+# input = sys.stdin.readline
+# n = int(input())
+# graph = [[] for _ in range(n + 1)]
+# for _ in range(n - 1):
+#     a, b = map(int, input().split())
+#     graph[a].append(b)
+#     graph[b].append(a)
+#
+# size = [0] * (n + 1)
+# cut = [False] * (n + 1)  # determine is node i is removed
+#
+# longest_ans = 0
+# ans_count = 1
+#
+# def get_sizes(cur, prev):
+#     """get subtree sizes of a subtree/component"""
+#     size[cur] = 1
+#     for adj in graph[cur]:
+#         if adj == prev or cut[adj]:
+#             continue
+#         get_sizes(adj, cur)
+#         size[cur] += size[adj]
+#
+#
+# def get_centroid(cur, prev, comp_size):
+#     """find the centroid of a subtree/component"""
+#     for adj in graph[cur]:
+#         if not cut[adj] and adj != prev and size[adj] > comp_size // 2:
+#             return get_centroid(adj, cur, comp_size)
+#     return cur
+#
+#
+# def get_longest_count(cur, prev):
+#     stack = [(cur, prev, 0)]  # get the longest path and how many times it appears in a subtree
+#     dists= []
+#     while stack:
+#         cur, prev, d = stack.pop()
+#         dists.append(d)
+#         for adj in graph[cur]:
+#             if adj != prev and not cut[adj]:
+#                 stack.append((adj, cur, d + 1))
+#     return max(dists), dists.count(max(dists))
+#
+#
+# def solve(root):
+#     global longest_ans, ans_count
+#     get_sizes(root, -1)
+#     if size[root] == 1:  # can't decompose further
+#         return
+#     root = get_centroid(root, -1, size[root])
+#
+#     paths = [(0, 1)]  # include empty path
+#     for adj in graph[root]:  # get subtree lengths
+#         if not cut[adj]:
+#             max_dist, dist_count = get_longest_count(adj, root)
+#             paths.append((max_dist + 1, dist_count))
+#
+#     paths.sort()
+#     max_joined = paths[-1][0] + paths[-2][0]  # join 2 longest paths
+#     total_cnt = 0
+#     match = defaultdict(int)
+#     for le, cnt in paths:
+#         if max_joined - le in match:
+#             total_cnt += match[max_joined - le] * cnt
+#         match[le] += cnt
+#
+#     if max_joined > longest_ans:  # update answer
+#         longest_ans = max_joined
+#         ans_count = total_cnt
+#     elif max_joined == longest_ans:
+#         ans_count += total_cnt
+#
+#     # decompose tree
+#     cut[root] = True
+#     for adj in graph[root]:
+#         if not cut[adj]:
+#             solve(adj)
+#
+# solve(1)
+# print(longest_ans + 1, ans_count)
