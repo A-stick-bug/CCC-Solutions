@@ -1,54 +1,47 @@
-// my python code was too slow
-// passes 50/50 test cases
+// https://dmoj.ca/problem/cco15p2
+// bitmask DP with DFS
+// store the nodes we visited on the current path as a bitmask
+// dp[i][mask]: longest path from the i-th node, already visited set bits in mask
 
-#include <iostream>
-#include <vector>
-#include <bitset>
-#include <array>
+#include <bits/stdc++.h>
+
+#define pii pair<int, int>
 
 using namespace std;
 
-const int MAXN = 18;
-int n_nodes, n_roads;
-vector<vector<pair<int, int>>> graph;
-int max_dist = 0;
-bitset<MAXN> state;
-array<array<int, 1 << MAXN>, MAXN> max_dists;
+const int inf = 1000000000;
+int N, M;
+vector<vector<pii>> graph;
+vector<vector<int>> dist;
 
-void dfs(int node, bitset<MAXN> &path, int dist) {
-    if (node == n_nodes - 1) {
-        max_dist = max(max_dist, dist);
-        return;
+int solve(int cur, int mask) {
+    if (cur == N - 1)  // reached destination
+        return 0;
+    if (dist[cur][mask] != -1)  // cache
+        return dist[cur][mask];
+    int mx = -inf;
+    for (auto [adj, adj_d]: graph[cur]) {
+        if (mask & (1 << adj))  // already visited
+            continue;
+        mx = max(mx, adj_d + solve(adj, mask | (1 << adj)));
     }
-
-    for (auto &[adj, adj_dist] : graph[node]) {
-        int new_dist = dist + adj_dist;
-        if (path[adj]) continue;
-
-        bitset<MAXN> new_path = path;
-        new_path[adj] = true;
-
-        if (!max_dists[adj][new_path.to_ullong()] || new_dist > max_dists[adj][new_path.to_ullong()]) {
-            max_dists[adj][new_path.to_ullong()] = new_dist;
-            dfs(adj, new_path, new_dist);
-        }
-    }
+    return dist[cur][mask] = mx;
 }
 
 int main() {
-    cin >> n_nodes >> n_roads;
-    graph.resize(n_nodes);
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
 
-    for (int i = 0; i < n_roads; i++) {
-        int a, b, dist;
-        cin >> a >> b >> dist;
-        graph[a].push_back({b, dist});
+    cin >> N >> M;
+    graph.resize(N, vector<pii >());
+    dist.resize(N, vector<int>(1 << N, -1));
+
+    for (int i = 0; i < M; i++) {
+        int a, b, c;
+        cin >> a >> b >> c;
+        graph[a].emplace_back(b, c);
     }
 
-    state[0] = true;
-
-    dfs(0, state, 0);
-    cout << max_dist << endl;
-
+    cout << solve(0, 1) << "\n";
     return 0;
 }
