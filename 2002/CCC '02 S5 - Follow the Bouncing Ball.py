@@ -1,4 +1,5 @@
 # https://dmoj.ca/problem/ccc02s5
+# Basically just math and observation
 # - the box is symmetric in both X and Y
 # - instead of reflecting the line, simply shift the box
 # - if after a large number of iterations, we still didn't hit a corner there is probably a cycle
