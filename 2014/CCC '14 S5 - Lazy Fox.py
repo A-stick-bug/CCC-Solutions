@@ -1,4 +1,4 @@
-# 9/15
+# 9/15, check C++ code for full solution
 # longest decreasing path: brute force dfs + memoization
 # TC: O(N^3), total of N^2 states with O(N) transitions
 
