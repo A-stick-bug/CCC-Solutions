@@ -1,3 +1,5 @@
+# try both possible arrangements
+
 a, b, c, d = map(int, input().split())
 
 ans1 = (a + c) + max(d, b)

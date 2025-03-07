@@ -1,3 +1,6 @@
+# https://dmoj.ca/problem/ccc25s2
+# use math, do not expand out the sequence
+
 s = input()
 n = int(input())  # 0-index
 
@@ -8,7 +11,7 @@ for c in s:
     else:
         res[-1][1] = res[-1][1] * 10 + int(c)
 
-total = sum(j for i,j in res)
+total = sum(j for i, j in res)
 n %= total
 
 for c, freq in res:
