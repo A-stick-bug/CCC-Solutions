@@ -1,51 +1,121 @@
 # https://dmoj.ca/problem/ccc03s4
-# Unique solution using the Z-algorithm
-# For each index, check for overlaps with later indices
+# Suffix array solution + LCP, O(n * log^2(n)), can be optimized to O(nlogn) by switching the template
 
-def z_algorithm(s):
+def suffix_array(s):  # O(n * log^2(n))
     n = len(s)
-    z = [0] * n
-    l = r = 0
+    perm = list(range(n))
+
+    perm.sort(key=lambda x: s[x])  # sort first character
+    rank = [0] * n  # order rank by first character, equality -> tied
     for i in range(1, n):
-        if l <= i <= r:
-            if i + z[i - l] - 1 < r:
-                z[i] = z[i - l]
-            else:
-                z[i] = r - i + 1
-                l = i
-                for j in range(r + 1, n):
-                    if s[j - i] == s[j]:
-                        z[i] += 1
-                        r = j
-                    else:
-                        break
-        else:
-            l = i
-            for j in range(i, n):
-                if s[j - i] == s[j]:
-                    z[i] += 1
-                    r = j
-                else:
-                    break
-    return z
+        rank[perm[i]] = rank[perm[i - 1]] + (1 if s[perm[i]] != s[perm[i - 1]] else 0)
+
+    p2 = 1
+    while p2 < n:
+        perm.sort(key=lambda x: (rank[x], rank[x + p2] if x + p2 < n else -1))  # double sorted prefix
+
+        new_rank = [0] * n
+        for i in range(1, n):  # rerank
+            prev = perm[i - 1]
+            cur = perm[i]
+            prev_pair = (rank[prev], rank[prev + p2] if prev + p2 < n else -1)
+            curr_pair = (rank[cur], rank[cur + p2] if cur + p2 < n else -1)
+            new_rank[cur] = new_rank[prev] + (1 if curr_pair != prev_pair else 0)
+
+        rank = new_rank
+        if rank[perm[-1]] == n - 1:
+            break
+        p2 *= 2
+
+    return perm
+
+
+def kasai_lcp(s, sa=None):  # O(n)
+    if sa is None:
+        sa = suffix_array(s)
+    n = len(s)
+    rank = [0] * n  # position of s[i:] in SA, i.e. lex order
+    for i, v in enumerate(sa):
+        rank[v] = i
+
+    lcp = [0] * n  # lcp is between suffixes i and i+1 in SA
+    common = 0
+    for i in range(n):  # loop by starting index of suffix
+        if rank[i] == n - 1:
+            continue
+        j = sa[rank[i] + 1]  # match with next element in SA
+        while i + common < n and j + common < n and s[i + common] == s[j + common]:
+            common += 1
+        lcp[rank[i]] = common
+        if common != 0:
+            common -= 1
+
+    return lcp
 
 
 def solve():
-    s = input()
+    s = input()  # padding
     n = len(s)
-    total = n * (n + 1) // 2
-    overlaps = [0] * n
 
-    for i in range(n):  # consider `i` as starting point
-        z = z_algorithm(s[i:])
-        for j in range(len(z)):
-            overlaps[i + j] = max(overlaps[i + j], z[j])
-    print(total + 1 - sum(overlaps))
+    sa = suffix_array(s)
+    lcp = kasai_lcp(s, sa)
+    total = n - sa[0]
+    for i in range(1, n):
+        total += (n - sa[i]) - lcp[i - 1]  # length of substring starting here minus overlap
+    print(total + 1)  # +empty
 
 
 t = int(input())
 for _ in range(t):
     solve()
+
+# # 15/15 Z-algorithm solution, O(n^2)
+# # For each index, check for overlaps with later indices
+#
+# def z_algorithm(s):
+#     n = len(s)
+#     z = [0] * n
+#     l = r = 0
+#     for i in range(1, n):
+#         if l <= i <= r:
+#             if i + z[i - l] - 1 < r:
+#                 z[i] = z[i - l]
+#             else:
+#                 z[i] = r - i + 1
+#                 l = i
+#                 for j in range(r + 1, n):
+#                     if s[j - i] == s[j]:
+#                         z[i] += 1
+#                         r = j
+#                     else:
+#                         break
+#         else:
+#             l = i
+#             for j in range(i, n):
+#                 if s[j - i] == s[j]:
+#                     z[i] += 1
+#                     r = j
+#                 else:
+#                     break
+#     return z
+#
+#
+# def solve():
+#     s = input()
+#     n = len(s)
+#     total = n * (n + 1) // 2
+#     overlaps = [0] * n
+#
+#     for i in range(n):  # consider `i` as starting point
+#         z = z_algorithm(s[i:])
+#         for j in range(len(z)):
+#             overlaps[i + j] = max(overlaps[i + j], z[j])
+#     print(total + 1 - sum(overlaps))
+#
+#
+# t = int(input())
+# for _ in range(t):
+#     solve()
 
 # # 9/15 hashing solution, O(n^2)
 # import string
